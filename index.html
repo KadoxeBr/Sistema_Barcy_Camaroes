@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcy Camarões | Master ERP v38.0</title>
+    <title>Barcy Camarões | Master ERP v47.0</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -14,315 +14,154 @@
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; color: #2f3640; overflow-x: hidden; }
 
-        /* HEADER MOBILE */
-        .mobile-header { display: none; background: var(--navy); color: white; padding: 15px 20px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1001; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .menu-toggle { background: none; border: none; color: var(--gold); font-size: 24px; cursor: pointer; }
+        /* --- INTEGRAÇÃO DA LOGO --- */
+        .system-logo { 
+            width: 180px; 
+            height: auto; 
+            margin-bottom: 10px; 
+            background: transparent;
+            mix-blend-mode: multiply; /* Faz o branco da imagem sumir no fundo branco */
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
+        }
+        .sidebar-logo { 
+            width: 130px; 
+            margin-bottom: 15px; 
+            background: transparent;
+            filter: brightness(1.1) drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
+            /* Se a imagem tiver fundo branco, usamos multiply ou tela transparente */
+        }
 
-        /* MENU LATERAL */
-        nav { width: 260px; background: var(--navy); color: white; height: 100vh; padding: 40px 20px; position: fixed; display: flex; flex-direction: column; align-items: center; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
-        .brand-title { color: var(--gold); font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--gold); padding-bottom: 15px; width: 100%; }
-        nav button { width: 100%; background: none; border: none; color: #dcdde1; padding: 12px; text-align: left; cursor: pointer; font-size: 14px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-weight: 500; }
-        nav button:hover, nav button.active-nav { background: rgba(197, 160, 89, 0.2); color: var(--gold); padding-left: 20px; border-left: 4px solid var(--gold); }
+        /* SEGURANÇA E INTERFACE OCULTA */
+        #app-sidebar, #app-main, .mobile-header { display: none; }
 
-        /* ÁREA PRINCIPAL */
-        main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); transition: margin 0.3s ease; }
-        .tab-content { display: none; background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--navy); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .login-box { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
+        .login-box h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.4rem; }
+
+        nav { width: 260px; background: var(--navy); color: white; height: 100vh; padding: 30px 20px; position: fixed; display: flex; flex-direction: column; align-items: center; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.2); transition: 0.3s; }
+        .brand-title { color: var(--gold); font-size: 1.2rem; font-weight: 800; text-transform: uppercase; text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--gold); padding-bottom: 15px; width: 100%; }
+        nav button { width: 100%; background: none; border: none; color: #dcdde1; padding: 12px; text-align: left; cursor: pointer; font-size: 14px; border-radius: 8px; margin-bottom: 5px; }
+        nav button:hover, nav button.active-nav { background: rgba(197, 160, 89, 0.2); color: var(--gold); border-left: 4px solid var(--gold); }
+
+        main { margin-left: 260px; padding: 30px; width: calc(100% - 260px); transition: 0.3s; min-height: 100vh; }
+        .tab-content { display: none; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .active { display: block; }
 
-        /* GRIDS RESPONSIVOS */
+        .mobile-header { background: var(--navy); color: white; padding: 15px 20px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1001; }
+        .menu-toggle { background: none; border: none; color: var(--gold); font-size: 24px; cursor: pointer; }
+
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .full { grid-column: span 2; }
         label { font-weight: 600; font-size: 13px; color: var(--navy); margin-bottom: 5px; display: block; }
-        input, select { width: 100%; padding: 12px; border: 1.5px solid #dcdde1; border-radius: 8px; outline: none; font-size: 16px; }
-
-        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; text-align: center; }
+        input, select { width: 100%; padding: 12px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 16px; outline: none; }
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; text-align: center; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-gold { background: var(--gold); width: 100%; }
-        .btn-action { padding: 6px 10px; border-radius: 4px; font-size: 11px; margin-right: 3px; color: white; border: none; cursor: pointer; }
+        .btn-action { padding: 6px 10px; border-radius: 4px; font-size: 11px; color: white; border: none; margin-right: 3px; }
 
-        /* TABELAS E CARDS */
-        .table-container { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th { text-align: left; padding: 12px; background: #f8f9fa; color: var(--gold); border-bottom: 2px solid #eee; font-size: 11px; text-transform: uppercase; }
+        .table-container { width: 100%; overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        th { text-align: left; padding: 12px; background: #f8f9fa; color: var(--gold); border-bottom: 2px solid #eee; font-size: 11px; }
         td { padding: 12px; border-bottom: 1px solid #f1f2f6; font-size: 13px; }
-        .resumo-estoque { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .card-resumo { flex: 1; min-width: 180px; background: white; padding: 15px; border-radius: 10px; border-left: 5px solid var(--gold); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .card-resumo small { color: #7f8c8d; font-size: 11px; font-weight: bold; display: block; }
-        .card-resumo span { font-size: 1.2rem; font-weight: 800; color: var(--navy); }
+
+        .resumo-estoque { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .card-resumo { flex: 1; min-width: 150px; background: white; padding: 15px; border-radius: 10px; border-left: 5px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-resumo span { font-size: 1.2rem; font-weight: 800; color: var(--navy); display: block; }
+
+        .admin-only, .read-only-msg { display: none; }
 
         @media (max-width: 768px) {
-            .mobile-header { display: flex; }
             nav { transform: translateX(-100%); width: 280px; }
             nav.open { transform: translateX(0); }
-            main { margin-left: 0; width: 100%; padding: 20px; }
+            main { margin-left: 0; width: 100%; padding: 15px; }
             .grid { grid-template-columns: 1fr; }
-            .full { grid-column: span 1; }
-            .resumo-estoque { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-<div class="mobile-header">
+<div id="login-screen">
+    <div class="login-box">
+        <img src="https://raw.githubusercontent.com/KadoxeBr/Sistema_Barcy_Camaroes/main/logobarcy.png" alt="Barcy Logo" class="system-logo">
+        <h2 id="login-title">Acesso ao Sistema</h2>
+        <div id="login-form">
+            <input type="text" id="user-name" placeholder="Usuário" style="margin-bottom: 10px;">
+            <input type="password" id="user-pass" placeholder="Senha" style="margin-bottom: 20px;">
+            <button id="btn-login-confirm" class="btn btn-gold" onclick="realizarLogin()">Sincronizando...</button>
+            <p style="font-size: 11px; margin-top: 15px;">Novo operador? <a href="javascript:void(0)" onclick="toggleRegistro(true)" style="color: var(--gold); font-weight: bold;">Cadastrar</a></p>
+        </div>
+        <div id="register-form" style="display:none;">
+            <input type="text" id="reg-name" placeholder="Nome Completo" style="margin-bottom: 10px;">
+            <input type="password" id="reg-pass" placeholder="Criar Senha" style="margin-bottom: 20px;">
+            <button class="btn btn-gold" onclick="cadastrarUsuario()">Solicitar Acesso</button>
+            <p style="font-size: 11px; margin-top: 15px;"><a href="javascript:void(0)" onclick="toggleRegistro(false)" style="color: var(--navy)">Voltar</a></p>
+        </div>
+    </div>
+</div>
+
+<div class="mobile-header" id="app-header">
     <div style="font-weight: 800; color: var(--gold); letter-spacing: 1px;">BARCY CAMARÕES</div>
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 </div>
 
-<nav id="sidebar">
-    <div class="brand-title">Barcy Camarões</div>
+<nav id="app-sidebar">
+    <img src="https://raw.githubusercontent.com/KadoxeBr/Sistema_Barcy_Camaroes/main/logobarcy.png" alt="Barcy Logo" class="sidebar-logo">
+    <div class="brand-title">Gestão Cloud</div>
+    <div style="font-size: 11px; margin-bottom: 20px; text-align: center;">Operador: <b id="user-display" style="color: var(--gold);">---</b></div>
     <button onclick="showTab('dashboard', this)" class="active-nav">📊 Dashboard</button>
     <button onclick="showTab('pedido', this)">📝 Novo Pedido</button>
-    <button onclick="showTab('producao', this)">🏭 Produção Pendente</button>
-    <button onclick="showTab('estoque_entrada', this)">📦 Estoque & Inventário</button>
-    <button onclick="showTab('cadastro_produto', this)">⚙️ Cadastrar Produto</button>
+    <button onclick="showTab('producao', this)">🏭 Produção</button>
+    <button onclick="showTab('estoque_entrada', this)">📦 Estoque</button>
+    <button onclick="showTab('cadastro_produto', this)">⚙️ Produtos</button>
     <button onclick="showTab('clientes', this)">🤝 Clientes</button>
-    <button onclick="showTab('pedidos', this)">📄 Histórico Nuvem</button>
-    <button onclick="baixarDadosNuvem()" style="color: var(--warning); border-top: 1px solid #34495e; margin-top: 10px; padding-top: 15px;">🔄 Sincronizar Agora</button>
+    <button onclick="showTab('pedidos', this)">📄 Histórico</button>
+    <button onclick="logout()" style="color: var(--danger); margin-top: auto; border-top: 1px solid #34495e; padding-top: 10px;">🚪 Sair</button>
 </nav>
 
-<main>
-    <div id="sync-indicator" class="sync-status" style="text-align: right; font-size: 11px; font-weight: bold;">Status: <span style="color: gray">Verificando...</span></div>
+<main id="app-main">
+    <div id="sync-indicator" style="text-align: right; font-size: 10px; margin-bottom: 10px; font-weight: bold;">Status Cloud: <span style="color: green">Conectado</span></div>
 
     <div id="dashboard" class="tab-content active">
-        <h1>Visão Geral</h1>
+        <h1>Dashboard Financeiro</h1>
         <div class="resumo-estoque">
-            <div class="card-resumo"><small>Faturamento</small><span id="dash-faturamento" style="color: var(--success);">R$ 0.00</span></div>
-            <div class="card-resumo"><small>Total de Pedidos</small><span id="dash-pedidos">0</span></div>
-            <div class="card-resumo"><small>OPs Pendentes</small><span id="dash-ops" style="color: var(--warning);">0</span></div>
+            <div class="card-resumo"><small>Faturamento Bruto</small><span id="dash-faturamento">R$ 0,00</span></div>
+            <div class="card-resumo"><small>Vendas Concluídas</small><span id="dash-pedidos">0</span></div>
+            <div class="card-resumo"><small>Fila de Produção</small><span id="dash-ops">0</span></div>
         </div>
-        <div style="background:white; padding:20px; border-radius:15px; border: 1px solid #eee;">
-            <canvas id="graficoVendas" height="150"></canvas>
+        <div style="background:white; padding:15px; border-radius:15px; border: 1px solid #eee; height: 320px;">
+            <canvas id="graficoVendas"></canvas>
         </div>
     </div>
 
     <div id="pedido" class="tab-content">
         <h1>Frente de Vendas</h1>
-        <div class="grid">
-            <div><label>Cliente</label><select id="v-cli"><option value="">-- Escolha --</option></select></div>
-            <div><label>Pagamento</label><select id="v-pgto"><option>Pix</option><option>Boleto</option><option>Cartão</option><option>Dinheiro</option></select></div>
-            <div><label>Data Lançamento</label><input type="date" id="v-data-lanc"></div>
-            <div><label>Data Entrega</label><input type="date" id="v-data-entrega"></div>
-            <div class="full"><label>Produto</label><input type="text" id="v-busca" list="sugestoes" oninput="checarEstoqueRapido(this.value)" placeholder="Digite SKU ou Nome..."><datalist id="sugestoes"></datalist><span id="hint-estoque" class="stock-hint"></span></div>
-            <div><label>Qtd (Caixas)</label><input type="number" id="v-qtd" value="0"></div>
-            <button class="btn btn-gold" style="margin-top:25px; background:var(--navy);" onclick="addItem()">➕ Adicionar</button>
+        <div class="admin-only">
+            <div class="grid">
+                <div><label>Cliente</label><select id="v-cli"></select></div>
+                <div><label>Pagamento</label><select id="v-pgto"><option>Pix</option><option>Boleto</option><option>Dinheiro</option></select></div>
+                <div><label>Data Lançamento</label><input type="date" id="v-data-lanc"></div>
+                <div><label>Data Entrega</label><input type="date" id="v-data-entrega"></div>
+                <div class="full"><label>Produto</label><input type="text" id="v-busca" list="sugestoes" oninput="checarEstoqueRapido(this.value)"><datalist id="sugestoes"></datalist><span id="hint-estoque" style="font-size:11px;"></span></div>
+                <div><label>Qtd (Caixas)</label><input type="number" id="v-qtd" value="0"></div>
+                <button class="btn btn-gold" style="margin-top:25px; background:var(--navy);" onclick="addItem()">➕ Incluir Item</button>
+            </div>
+            <div class="table-container"><table><thead><tr><th>Item</th><th>R$/kg</th><th>Qtd</th><th>Total</th><th>#</th></tr></thead><tbody id="cart-body"></tbody></table></div>
+            <div style="text-align: right; margin-top:20px; font-size:22px; font-weight:bold; color:var(--success);">TOTAL: R$ <span id="total-geral">0.00</span></div>
+            <button class="btn btn-gold" style="background:var(--success); margin-top:20px; width: 100%; height: 50px;" onclick="processarVendaFinal()">✅ Gravar Pedido</button>
         </div>
-        <div class="table-container">
-            <table><thead><tr><th>Produto</th><th>R$/kg</th><th>Qtd</th><th>Subtotal</th><th>Ação</th></tr></thead><tbody id="cart-body"></tbody></table>
-        </div>
-        <div style="text-align: right; margin-top:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-            <label>Desconto (R$): </label><input type="number" id="v-desconto" value="0" oninput="renderCart()" style="width:100px; padding: 5px; margin-bottom: 10px;">
-            <div style="font-size:24px; font-weight:bold; color:var(--success);">TOTAL: R$ <span id="total-geral">0.00</span></div>
-        </div>
-        <button id="btn-finalizar" class="btn btn-gold" style="background:var(--success); margin-top:20px; width: 100%; height: 50px;" onclick="processarVendaFinal()">✅ Finalizar na Nuvem</button>
+        <div class="read-only-msg" style="text-align: center; color: var(--danger); padding: 40px;">⚠️ Acesso restrito para novos lançamentos.</div>
     </div>
 
-    <div id="producao" class="tab-content">
-        <h1>Produção Pendente</h1>
-        <div class="table-container">
-            <table><thead><tr><th>Data</th><th>ID Pedido</th><th>Cliente</th><th>Produto</th><th>Qtd OP</th><th>Ação</th></tr></thead><tbody id="lista-op"></tbody></table>
-        </div>
-    </div>
+    <div id="producao" class="tab-content"><h1>Produção Pendente</h1><div class="table-container"><table><thead><tr><th>Data</th><th>ID</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>#</th></tr></thead><tbody id="lista-op"></tbody></table></div></div>
     
     <div id="estoque_entrada" class="tab-content">
-        <h1>Controle de Estoque</h1>
+        <h1>Controle de Inventário</h1>
         <div class="resumo-estoque">
-            <div class="card-resumo"><small>Físico (Cx)</small><span id="res-fisico">0</span></div>
-            <div class="card-resumo"><small>Comprometido OP</small><span id="res-comprometido" style="color: var(--danger);">0</span></div>
-            <div class="card-resumo"><small>Livre P/ Venda</small><span id="res-disponivel" style="color: var(--success);">0</span></div>
+            <div class="card-resumo"><small>Estoque Físico</small><span id="res-fisico">0</span></div>
+            <div class="card-resumo"><small>Estoque Livre</small><span id="res-disponivel">0</span></div>
         </div>
-        <div class="grid" style="background:#fdfaf3; padding:20px; border-radius:12px; border: 1px solid #eee;">
-            <div class="full"><label>Item p/ Entrada</label><select id="ent-prod"></select></div>
-            <div><label>Quantidade Entrada</label><input type="number" id="ent-qtd"></div>
-            <button class="btn btn-gold" style="margin-top:25px" onclick="processarEntradaIntegrada()">Confirmar Entrada Nuvem</button>
+        <div class="admin-only" style="background:#fdfaf3; padding:20px; border-radius:12px; margin-bottom: 20px;">
+            <div class="grid"><div><label>Produto</label><select id="ent-prod"></select></div><div><label>Quantidade</label><input type="number" id="ent-qtd"></div><button class="btn btn-gold" style="margin-top:25px" onclick="processarEntradaIntegrada()">Confirmar Entrada</button></div>
         </div>
-        <input type="text" id="filtro-est" placeholder="🔍 Buscar no estoque..." oninput="render()" style="margin-top:20px; width: 100%;">
-        <div class="table-container">
-            <table><thead><tr><th>SKU</th><th>Produto</th><th>Físico</th><th>Comprometido</th><th>Disponível</th></tr></thead><tbody id="lista-saldos"></tbody></table>
-        </div>
-    </div>
-
-    <div id="cadastro_produto" class="tab-content"><h1>Produtos</h1><div class="grid"><div class="full"><label>Nome</label><input type="text" id="p-nome"></div><div><label>SKU</label><input type="text" id="p-sku"></div><div><label>Peso Cx</label><input type="number" id="p-peso"></div><div><label>Preço kg</label><input type="number" id="p-preco"></div></div><button id="btn-salvar-prod" class="btn btn-gold" onclick="salvarProduto()">Cadastrar</button><div class="table-container"><table><thead><tr><th>SKU</th><th>Produto</th><th style="text-align:right">Ação</th></tr></thead><tbody id="lista-cad-prod"></tbody></table></div></div>
-    <div id="clientes" class="tab-content"><h1>Clientes</h1><div class="grid"><div><label>Nome</label><input type="text" id="c-nome"></div><div><label>CNPJ/CPF</label><input type="text" id="c-doc"></div></div><button id="btn-salvar-cli" class="btn btn-gold" onclick="salvarCliente()">Cadastrar</button><div class="table-container"><table><thead><tr><th>Nome</th><th>Doc</th><th style="text-align:right">Ação</th></tr></thead><tbody id="lista-cad-cli"></tbody></table></div></div>
-    
-    <div id="pedidos" class="tab-content"><h1>Histórico Nuvem</h1><div class="table-container"><table><thead><tr><th>ID</th><th>Lançamento</th><th>Entrega</th><th>Cliente</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead><tbody id="lista-hist"></tbody></table></div></div>
-</main>
-
-<script>
-    // URL DA SUA API (Preservada do seu script)
-    const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5Ave6GNb_rwG25V_hZCCIiCZJpdPJECPm2OAwFJ3rvmXuVfkDDuS_A2Yyj7SLPaSt/exec"; 
-    
-    let db = { prods: [], clis: [], peds: [], ops: [] };
-    let cart = [];
-    let graficoInstancia = null;
-
-    function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
-
-    function showTab(id, btn) { 
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); 
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
-        if(btn) btn.classList.add('active-nav');
-        if(window.innerWidth <= 768) toggleMenu();
-        render();
-    }
-
-    // --- COMUNICAÇÃO API (Sincronizada com seu original) ---
-    async function enviarParaSheets(acao, payload) {
-        const ind = document.getElementById('sync-indicator');
-        ind.innerHTML = 'Status: <span style="color:orange">Enviando...</span>';
-        payload.action = acao; 
-        try {
-            const res = await fetch(SHEET_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-            const result = await res.json();
-            if(result.status === "Sucesso") { ind.innerHTML = 'Status: <span style="color:green">Sincronizado</span>'; return true; }
-            return false;
-        } catch (e) { ind.innerHTML = 'Status: <span style="color:red">Offline</span>'; return false; }
-    }
-
-    async function baixarDadosNuvem() {
-        const ind = document.getElementById('sync-indicator');
-        ind.innerHTML = 'Status: <span style="color:orange">Sincronizando...</span>';
-        try {
-            const res = await fetch(SHEET_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({action: 'getAllData'}) });
-            const result = await res.json();
-            if(result.status === "Sucesso" && result.dados) {
-                db = result.dados; render(); ind.innerHTML = 'Status: <span style="color:green">Atualizado</span>';
-            }
-        } catch (e) { ind.innerHTML = 'Status: <span style="color:red">Erro Download</span>'; }
-    }
-
-    // --- LÓGICA DE ESTOQUE E OP (CORRIGIDA CONFORME ORIGINAL + CLIENTE) ---
-    function checarEstoqueRapido(val) {
-        const hint = document.getElementById('hint-estoque');
-        if(!val) return hint.innerText = "";
-        const p = db.prods.find(x => x.sku == val || x.nome.toLowerCase() == val.toLowerCase());
-        if(p) {
-            const comp = db.ops.filter(o => o.produto == p.nome && o.status == "Pendente").reduce((a,b)=>a+Number(b.qtd), 0);
-            const disp = Number(p.qtd || 0) - comp;
-            hint.innerHTML = `<span style="color:${disp>0?'green':'red'}">Físico: ${p.qtd} | Livre: ${disp} cx</span>`;
-        } else hint.innerText = "";
-    }
-
-    async function processarEntradaIntegrada() {
-        const sku = document.getElementById('ent-prod').value, q = parseInt(document.getElementById('ent-qtd').value);
-        if(!sku || isNaN(q) || q<=0) return alert("Preencha corretamente.");
-        
-        // Lógica de abate de OPs conforme seu original
-        let q_res = q, ops_res = [], peds_af = [];
-        db.ops.filter(o => o.produto == db.prods.find(p=>p.sku==sku).nome && o.status == "Pendente").forEach(op => {
-            if(q_res >= Number(op.qtd)) { q_res -= Number(op.qtd); ops_res.push(op.id); peds_af.push(op.pedido_id); }
-        });
-        
-        let peds_prontos = [];
-        [...new Set(peds_af)].forEach(pid => {
-            if(db.ops.filter(o => o.pedido_id == pid && o.status == "Pendente" && !ops_res.includes(o.id)).length === 0) peds_prontos.push(pid);
-        });
-
-        if(await enviarParaSheets('atualizarEstoqueEntrada', { sku: sku, qtd_add: q, ops_resolvidas: ops_res, peds_resolvidos: peds_prontos })) {
-            alert("✅ Estoque Abastecido!"); document.getElementById('ent-qtd').value = ""; baixarDadosNuvem();
-        }
-    }
-
-    async function processarVendaFinal() {
-        const cli = document.getElementById('v-cli').value, dL = document.getElementById('v-data-lanc').value, dE = document.getElementById('v-data-entrega').value;
-        if(!cart.length || cli === "" || !dL || !dE) return alert("Preencha tudo!");
-
-        const id_ped = Math.floor(Date.now() / 1000); let st = "Pronto", ops_novas = [], baixas = [];
-
-        cart.forEach((it, idx) => {
-            const pEst = db.prods.find(x => x.sku === it.sku);
-            let fis = Number(pEst ? pEst.qtd : 0);
-            if(fis < it.qtd) {
-                st = "Em Produção";
-                ops_novas.push({ id: id_ped + idx + 1, pedido_id: id_ped, data_op: dL, produto: it.nome, qtd: (it.qtd - fis), status: "Pendente" });
-                if(fis > 0) baixas.push({ sku: it.sku, qtd: fis });
-            } else { baixas.push({ sku: it.sku, qtd: it.qtd }); }
-        });
-
-        const ped = { id: id_ped, data_lanc: dL, data_entrega: dE, cliente: db.clis[cli].nome, pgto: document.getElementById('v-pgto').value, desconto: document.getElementById('v-desconto').value, itens: cart, total: document.getElementById('total-geral').innerText, status: st };
-        if(await enviarParaSheets('salvarPedidoCompleto', { pedido: ped, ops: ops_novas, baixas_estoque: baixas })) {
-            alert("✅ Pedido na Nuvem!"); cart = []; renderCart(); baixarDadosNuvem();
-        }
-    }
-
-    // --- RENDERIZAÇÃO E DASHBOARD ---
-    function render() {
-        renderDashboard();
-        const f = (document.getElementById('filtro-est')?.value || "").toLowerCase();
-        
-        // Preenche Dropdowns
-        document.getElementById('sugestoes').innerHTML = db.prods.map(p => `<option value="${p.sku}">${p.nome}</option>`).join('');
-        document.getElementById('v-cli').innerHTML = '<option value="">-- Cliente --</option>' + db.clis.map((c,i) => `<option value="${i}">${c.nome}</option>`).join('');
-        document.getElementById('ent-prod').innerHTML = '<option value="">-- Produto --</option>' + db.prods.map(p => `<option value="${p.sku}">${p.sku} - ${p.nome}</option>`).join('');
-
-        // Tabela Estoque (Fiel ao seu original v28/v31)
-        let fT = 0, cT = 0;
-        document.getElementById('lista-saldos').innerHTML = db.prods.filter(p => p.nome.toLowerCase().includes(f)).map(p => {
-            const comp = db.ops.filter(o => o.produto == p.nome && o.status == "Pendente").reduce((a,b)=>a+Number(b.qtd), 0);
-            fT += Number(p.qtd || 0); cT += comp;
-            return `<tr><td>${p.sku}</td><td>${p.nome}</td><td>${p.qtd || 0}</td><td>${comp}</td><td style="color:${(p.qtd-comp)<0?'red':'green'}"><b>${(p.qtd||0)-comp}</b></td></tr>`;
-        }).join('');
-        document.getElementById('res-fisico').innerText = fT;
-        document.getElementById('res-comprometido').innerText = cT;
-        document.getElementById('res-disponivel').innerText = (fT - cT);
-
-        // Produção Pendente (Com campo CLIENTE adicionado)
-        document.getElementById('lista-op').innerHTML = db.ops.filter(o => o.status == "Pendente").map(o => {
-            const ped = db.peds.find(p => p.id == o.pedido_id);
-            return `<tr><td>${o.data_op}</td><td>#${o.pedido_id}</td><td><b>${ped ? ped.cliente : '---'}</b></td><td>${o.produto}</td><td>${o.qtd}</td><td><button onclick="alert('Dê entrada no estoque para concluir')" class="btn-action" style="background:var(--success)">OK</button></td></tr>`;
-        }).join('');
-
-        // Histórico
-        document.getElementById('lista-hist').innerHTML = db.peds.map((p,i) => `<tr><td>#${p.id}</td><td>${p.data_lanc}</td><td>${p.data_entrega}</td><td>${p.cliente}</td><td>R$ ${p.total}</td><td>${p.status}</td><td><button onclick="gerarPDF(${i})" class="btn-action" style="background:var(--gold)">📄</button></td></tr>`).join('');
-        
-        // Listas de Cadastro
-        document.getElementById('lista-cad-prod').innerHTML = db.prods.map(p => `<tr><td>${p.sku}</td><td>${p.nome}</td><td style="text-align:right"><button class="btn-action" style="background:var(--danger)">X</button></td></tr>`).join('');
-        document.getElementById('lista-cad-cli').innerHTML = db.clis.map(c => `<tr><td>${c.nome}</td><td>${c.doc}</td><td style="text-align:right"><button class="btn-action" style="background:var(--danger)">X</button></td></tr>`).join('');
-    }
-
-    function renderDashboard() {
-        let fat = 0, pMap = {};
-        db.peds.forEach(p => { if(p.status!=='Cancelado'){ fat += parseFloat(p.total)||0; let its = typeof p.itens === 'string' ? JSON.parse(p.itens) : p.itens; its.forEach(it => pMap[it.nome] = (pMap[it.nome]||0)+Number(it.qtd)); } });
-        document.getElementById('dash-faturamento').innerText = "R$ " + fat.toFixed(2);
-        document.getElementById('dash-pedidos').innerText = db.peds.length;
-        document.getElementById('dash-ops').innerText = db.ops.filter(o=>o.status==='Pendente').length;
-        if(graficoInstancia) graficoInstancia.destroy();
-        graficoInstancia = new Chart(document.getElementById('graficoVendas'), { type: 'bar', data: { labels: Object.keys(pMap), datasets: [{ label: 'Caixas', data: Object.values(pMap), backgroundColor: '#c5a059' }] }, options: { responsive: true, maintainAspectRatio: false } });
-    }
-
-    function addItem() {
-        const b = document.getElementById('v-busca').value, q = parseInt(document.getElementById('v-qtd').value);
-        const p = db.prods.find(x => x.sku == b || x.nome.toLowerCase().includes(b.toLowerCase()));
-        if(!p || q <= 0) return alert("Erro no item.");
-        cart.push({ sku: p.sku, nome: p.nome, qtd: q, p_u: parseFloat(p.peso||0), pr_u: parseFloat(p.preco||0), subtotal: (q * p.peso * p.preco) });
-        document.getElementById('v-busca').value = ""; document.getElementById('v-qtd').value = "0"; renderCart();
-    }
-
-    function renderCart() {
-        let sub = 0;
-        document.getElementById('cart-body').innerHTML = cart.map((it, i) => { sub += it.subtotal; return `<tr><td>${it.nome}</td><td>R$ <input type="number" class="btn" style="color:black; width:80px; padding:5px" value="${it.pr_u.toFixed(2)}" onchange="cart[${i}].pr_u=parseFloat(this.value);cart[${i}].subtotal=cart[${i}].qtd*cart[${i}].p_u*cart[${i}].pr_u;renderCart()"></td><td>${it.qtd}</td><td>R$ ${it.subtotal.toFixed(2)}</td><td><button onclick="cart.splice(${i},1);renderCart()">✖</button></td></tr>`; }).join('');
-        document.getElementById('total-geral').innerText = (sub - (parseFloat(document.getElementById('v-desconto').value)||0)).toFixed(2);
-    }
-
-    async function salvarProduto() {
-        const p = { sku: document.getElementById('p-sku').value, nome: document.getElementById('p-nome').value, peso: parseFloat(document.getElementById('p-peso').value), preco: parseFloat(document.getElementById('p-preco').value), qtd: 0 };
-        if(await enviarParaSheets('salvarProduto', p)) { alert("✅ Produto Salvo!"); baixarDadosNuvem(); }
-    }
-
-    async function salvarCliente() {
-        if(await enviarParaSheets('salvarCliente', { nome: document.getElementById('c-nome').value, doc: document.getElementById('c-doc').value })) { alert("✅ Cliente Salvo!"); baixarDadosNuvem(); }
-    }
-
-    function gerarPDF(i) {
-        const p = db.peds[i]; const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        doc.text(`BARCY CAMAROES - Pedido #${p.id}`, 20, 20);
-        doc.text(`Cliente: ${p.cliente} | Entrega: ${p.data_entrega}`, 20, 30);
-        let its = typeof p.itens === 'string' ? JSON.parse(p.itens) : p.itens;
-        doc.autoTable({ startY: 40, head: [['Item', 'Qtd', 'Total']], body: its.map(it => [it.nome, it.qtd, "R$ "+Number(it.subtotal).toFixed(2)]) });
-        doc.save(`Pedido_${p.id}.pdf`);
-    }
-
-    document.getElementById('v-data-lanc').valueAsDate = new Date();
-    baixarDadosNuvem();
-</script>
-</body>
-</html>
+        <input type="text" id="filtro-est" placeholder="Filtrar estoque..." oninput="render()" style="width: 100%;">
+        <div class="table-container"><table><thead><tr><th>SKU</th><th>Produto</th><th>Fís
